@@ -1,5 +1,5 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
-import { catchError, map, Observable, tap } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { ResponseStruct } from '../types/response-struct';
 
 export class ResponseDataInterceptor implements NestInterceptor {

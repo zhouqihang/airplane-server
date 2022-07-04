@@ -1,6 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ClientException } from 'src/common/exceptions/client.exception';
 import { mapDto2Where } from 'src/common/helpers/map-dto-where';
+import { Pagination } from 'src/common/types/pagination';
 import { FindManyOptions, FindOptionsWhere, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SearchUserDto } from './dto/search-user.dto';
@@ -22,7 +24,9 @@ export class UsersService {
       ],
     });
     if (has.length) {
-      throw new BadRequestException();
+      throw new ClientException(
+        ClientException.responseCode.user_already_exist,
+      );
     }
     const user = new User();
     Object.assign(user, createUserDto);
@@ -48,8 +52,8 @@ export class UsersService {
       'email',
       'status',
     ]);
-    const users = await this.userRepository.find(findOpts);
-    return users.map((user) => user.getUserRO());
+    const [users, count] = await this.userRepository.findAndCount(findOpts);
+    return new Pagination(users, count, searchUserDto);
   }
 
   async findById(id: number) {
@@ -58,10 +62,7 @@ export class UsersService {
       status: EUserStatus.enabled,
     });
     if (!user) {
-      throw new BadRequestException();
-    }
-    if (user) {
-      // user.createTime = new Date(user.createTime).getTime();
+      throw new ClientException(ClientException.responseCode.user_not_exist);
     }
 
     return user.getUserRO();
