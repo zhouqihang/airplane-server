@@ -85,4 +85,13 @@ export class UsersService {
     this.userRepository.save(user);
     return true;
   }
+
+  async findByAccount(account: string) {
+    const user = await this.userRepository.findOne({
+      where: {
+        account,
+      },
+    });
+    return user;
+  }
 }

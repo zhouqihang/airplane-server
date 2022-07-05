@@ -1,5 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { ResponseErrorFilter } from './common/filters/response-error.filter';
 import { ResponseDataInterceptor } from './common/interceptors/response-data.interceptor';
@@ -7,6 +8,8 @@ import CONFIG from './config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix(CONFIG.api_prefix);
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       // 开启白名单
