@@ -13,7 +13,12 @@ export class AuthController {
   async login(
     @Body() loginDto: LoginDto,
     @Res({ passthrough: true }) response: Response,
+    @Cookies('session_id') sessionId: string,
   ) {
+    // 已经登录的，重置
+    if (await this.authService.hasLogin(sessionId)) {
+      await this.authService.logout(sessionId);
+    }
     const datetime = Date.now() + CONFIG.cookie_expires * 60 * 60 * 1000;
     response.cookie('session_id', await this.authService.login(loginDto), {
       expires: new Date(datetime),

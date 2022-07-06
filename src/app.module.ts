@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
+import { RedisModule } from './redis/redis.module';
 import config from './config';
 
 const ORMModule = TypeOrmModule.forRoot({
@@ -18,8 +19,15 @@ const ORMModule = TypeOrmModule.forRoot({
   synchronize: true,
 });
 
+const UsedRedisModule = RedisModule.forRoot({
+  username: config.redis_username,
+  password: config.redis_password,
+  port: config.redis_port,
+  host: config.redis_host,
+});
+
 @Module({
-  imports: [UsersModule, ORMModule, AuthModule],
+  imports: [UsersModule, ORMModule, UsedRedisModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
