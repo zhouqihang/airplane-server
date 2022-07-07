@@ -5,7 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
-import { RedisModule } from './redis/redis.module';
+import { RedisModule } from './common/modules/redis/redis.module';
 import { ProjectsModule } from './projects/projects.module';
 import config from './config';
 import { Project } from './projects/entities/project.entity';
@@ -29,7 +29,13 @@ const UsedRedisModule = RedisModule.forRoot({
 });
 
 @Module({
-  imports: [UsersModule, ORMModule, UsedRedisModule, AuthModule, ProjectsModule],
+  imports: [
+    UsersModule,
+    ORMModule,
+    UsedRedisModule,
+    AuthModule,
+    ProjectsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

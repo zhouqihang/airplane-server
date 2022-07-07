@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'crypto';
 import { ClientException } from 'src/common/exceptions/client.exception';
 import config from 'src/config';
-import { RedisService } from 'src/redis/redis.service';
+import { RedisService } from 'src/common/modules/redis/redis.service';
 import { EUserStatus } from 'src/users/types';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';

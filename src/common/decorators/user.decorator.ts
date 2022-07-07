@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { RedisClientService } from 'src/redis/redis-client.service';
+import { RedisClientService } from 'src/common/modules/redis/redis-client.service';
 import { User as UserEntity } from 'src/users/entities/user.entity';
 
 export const User = createParamDecorator(async function (

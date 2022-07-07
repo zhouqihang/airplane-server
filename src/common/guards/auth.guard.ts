@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { RedisClientService } from 'src/redis/redis-client.service';
+import { RedisClientService } from 'src/common/modules/redis/redis-client.service';
 import { ClientException } from '../exceptions/client.exception';
 
 @Injectable()
