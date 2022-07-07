@@ -7,8 +7,12 @@ export class ResponseErrorFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
-    const code = exception.getStatus();
-    const exceptionResponse = exception.getResponse();
+    let code = 400;
+    let exceptionResponse: string | object = 'unknow err';
+    try {
+      code = exception.getStatus();
+      exceptionResponse = exception.getResponse();
+    } catch (err) {}
     // 统一处理客户端异常
     if (('' + code).startsWith('4')) {
       response.status(200);

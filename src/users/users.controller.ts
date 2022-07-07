@@ -18,7 +18,7 @@ import { User } from 'src/common/decorators/user.decorator';
 // * 字段映射
 // * 参数校验
 // * 统一响应结构
-// 登录验证
+// * 登录验证
 // 权限控制
 @Controller('users')
 @UseGuards(AuthGuard)

@@ -6,7 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { RedisModule } from './redis/redis.module';
+import { ProjectsModule } from './projects/projects.module';
 import config from './config';
+import { Project } from './projects/entities/project.entity';
 
 const ORMModule = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -15,7 +17,7 @@ const ORMModule = TypeOrmModule.forRoot({
   username: config.db_username,
   password: config.db_pwd,
   database: config.db_database,
-  entities: [User],
+  entities: [User, Project],
   synchronize: true,
 });
 
@@ -27,7 +29,7 @@ const UsedRedisModule = RedisModule.forRoot({
 });
 
 @Module({
-  imports: [UsersModule, ORMModule, UsedRedisModule, AuthModule],
+  imports: [UsersModule, ORMModule, UsedRedisModule, AuthModule, ProjectsModule],
   controllers: [AppController],
   providers: [AppService],
 })
