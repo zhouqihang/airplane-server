@@ -48,7 +48,7 @@ export class User extends BaseEntity {
   @Column('datetime', { default: () => 'NOW()' })
   updateTime: string;
 
-  @OneToMany(() => UserProject, (userProject) => userProject.userId)
+  @OneToMany(() => UserProject, (userProject) => userProject.user)
   projects: UserProject[];
 
   @BeforeUpdate()

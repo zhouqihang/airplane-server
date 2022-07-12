@@ -1,4 +1,12 @@
-import { BeforeUpdate, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { UserProject } from 'src/common/entities/user-project.entity';
+import {
+  BeforeUpdate,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { EProjectStatus } from '../types';
 
 @Entity('projects')
@@ -30,6 +38,10 @@ export class Project {
     default: () => 'NOW()',
   })
   updateTime: string;
+
+  @OneToMany(() => UserProject, (userProject) => userProject.project)
+  @JoinColumn()
+  usersProjectsMap: UserProject[];
 
   @BeforeUpdate()
   onBeforeUpdate() {

@@ -9,6 +9,7 @@ import { RedisModule } from './common/modules/redis/redis.module';
 import { ProjectsModule } from './projects/projects.module';
 import config from './config';
 import { Project } from './projects/entities/project.entity';
+import { UserProject } from './common/entities/user-project.entity';
 
 const ORMModule = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -17,7 +18,7 @@ const ORMModule = TypeOrmModule.forRoot({
   username: config.db_username,
   password: config.db_pwd,
   database: config.db_database,
-  entities: [User, Project],
+  entities: [User, Project, UserProject],
   synchronize: true,
 });
 
