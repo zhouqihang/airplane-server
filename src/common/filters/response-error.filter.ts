@@ -1,4 +1,9 @@
-import { ArgumentsHost, ExceptionFilter, HttpException } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  ExceptionFilter,
+  HttpException,
+  Logger,
+} from '@nestjs/common';
 import { isArray, isString } from 'class-validator';
 import { Response } from 'express';
 import { ResponseStruct } from '../types/response-struct';
@@ -12,7 +17,9 @@ export class ResponseErrorFilter implements ExceptionFilter {
     try {
       code = exception.getStatus();
       exceptionResponse = exception.getResponse();
-    } catch (err) {}
+    } catch (err) {
+      Logger.error(exception);
+    }
     // 统一处理客户端异常
     if (('' + code).startsWith('4')) {
       response.status(200);

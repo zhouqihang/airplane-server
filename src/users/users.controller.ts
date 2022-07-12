@@ -26,27 +26,31 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto, @User('id') userId: number) {
+    return this.usersService.create(createUserDto, userId);
   }
 
   @Get()
-  findAll(@Query() searchUserDto: SearchUserDto) {
-    return this.usersService.findAll(searchUserDto);
+  findAll(@Query() searchUserDto: SearchUserDto, @User('id') userId: number) {
+    return this.usersService.findAll(searchUserDto, userId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.usersService.findById(id);
+  findOne(@Param('id') id: number, @User('id') userId: number) {
+    return this.usersService.findById(id, userId);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @User('id') userId: number,
+  ) {
+    return this.usersService.update(+id, updateUserDto, userId);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  remove(@Param('id') id: string, @User('id') userId: number) {
+    return this.usersService.remove(+id, userId);
   }
 }

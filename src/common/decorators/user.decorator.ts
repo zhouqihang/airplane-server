@@ -10,6 +10,7 @@ export const User = createParamDecorator(async function (
   const sessionId = request.cookies.session_id;
   const redis = RedisClientService.getClient();
   const uid = await redis.get(sessionId);
+  if (data === 'id') return parseInt(uid);
   const u = await UserEntity.findOneBy({ id: parseInt(uid) });
   if (!u) {
     return data ? '' : {};

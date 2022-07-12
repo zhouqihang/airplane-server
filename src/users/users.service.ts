@@ -16,7 +16,7 @@ export class UsersService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto, createdBy: number) {
     const has = await this.userRepository.find({
       where: [
         { email: createUserDto.email },
@@ -30,13 +30,16 @@ export class UsersService {
     }
     const user = new User();
     Object.assign(user, createUserDto);
+    user.createdBy = createdBy;
     await this.userRepository.save(user);
     return user.getUserRO();
   }
 
-  async findAll(searchUserDto: SearchUserDto) {
+  async findAll(searchUserDto: SearchUserDto, createdBy: number) {
     const { page, pageSize } = searchUserDto;
-    const where: FindOptionsWhere<User> = {};
+    const where: FindOptionsWhere<User> = {
+      createdBy,
+    };
     const findOpts: FindManyOptions<User> = {
       where,
       skip: pageSize * (page - 1),
@@ -56,10 +59,11 @@ export class UsersService {
     return new Pagination(users, count, searchUserDto);
   }
 
-  async findById(id: number) {
+  async findById(id: number, createdBy: number) {
     const user = await this.userRepository.findOneBy({
       id,
       status: EUserStatus.enabled,
+      createdBy,
     });
     if (!user) {
       throw new ClientException(ClientException.responseCode.user_not_exist);
@@ -68,8 +72,8 @@ export class UsersService {
     return user.getUserRO();
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findById(id);
+  async update(id: number, updateUserDto: UpdateUserDto, createdBy: number) {
+    const user = await this.findById(id, createdBy);
     Object.keys(updateUserDto).forEach((key) => {
       user[key] = updateUserDto[key];
     });
@@ -79,8 +83,8 @@ export class UsersService {
     return updatedUser.getUserRO();
   }
 
-  async remove(id: number) {
-    const user = await this.findById(id);
+  async remove(id: number, createdBy: number) {
+    const user = await this.findById(id, createdBy);
     user.softRemoved = true;
     this.userRepository.save(user);
     return true;

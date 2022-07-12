@@ -1,9 +1,11 @@
+import { UserProject } from 'src/common/entities/user-project.entity';
 import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
   BeforeUpdate,
   BaseEntity,
+  OneToMany,
 } from 'typeorm';
 import { EUserStatus } from '../types';
 
@@ -34,6 +36,9 @@ export class User extends BaseEntity {
   @Column({ type: 'boolean', default: false })
   softRemoved: boolean;
 
+  @Column({ default: -1 })
+  createdBy: number;
+
   @Column({
     type: 'datetime',
     default: () => 'NOW()',
@@ -42,6 +47,9 @@ export class User extends BaseEntity {
 
   @Column('datetime', { default: () => 'NOW()' })
   updateTime: string;
+
+  @OneToMany(() => UserProject, (userProject) => userProject.userId)
+  projects: UserProject[];
 
   @BeforeUpdate()
   setUpdateTime() {
