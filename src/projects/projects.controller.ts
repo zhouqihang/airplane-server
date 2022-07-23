@@ -38,6 +38,11 @@ export class ProjectsController {
     return await this.projectsService.findAll(searchProjectDto, userId);
   }
 
+  @Get('/self')
+  async findSelfPro(@User('id') userId: number) {
+    return await this.projectsService.findSelfPro(userId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number, @User('id') userId: number) {
     return await this.projectsService.findOne(id, userId);

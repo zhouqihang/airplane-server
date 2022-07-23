@@ -49,12 +49,7 @@ export class UsersService {
         status: 'ASC',
       },
     };
-    mapDto2Where(searchUserDto, where, [
-      'username',
-      'account',
-      'email',
-      'status',
-    ]);
+    mapDto2Where(searchUserDto, where, ['username', 'status']);
     const [users, count] = await this.userRepository.findAndCount(findOpts);
     return new Pagination(users, count, searchUserDto);
   }

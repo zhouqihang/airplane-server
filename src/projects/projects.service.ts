@@ -96,4 +96,19 @@ export class ProjectsService {
     const project = await this.projectRepository.findOneBy({ name });
     return !!project;
   }
+
+  async findSelfPro(userId: number) {
+    const qb = this.projectRepository.createQueryBuilder('project');
+    const projects = await qb
+      .leftJoinAndSelect('project.usersProjectsMap', 'project_user_map')
+      .where('project_user_map.userId = :userId', { userId })
+      .orderBy('project.status', 'ASC')
+      .getMany();
+    return projects.map(({ usersProjectsMap, ...others }) => {
+      return {
+        ...others,
+        role: usersProjectsMap[0].role,
+      };
+    });
+  }
 }
