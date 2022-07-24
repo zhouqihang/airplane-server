@@ -17,6 +17,11 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto, createdBy: number) {
+    if (createUserDto.password !== createUserDto.confirmPassword) {
+      throw new ClientException(
+        ClientException.responseCode.pwd_not_equal_confirm_pwd,
+      );
+    }
     const has = await this.userRepository.find({
       where: [
         { email: createUserDto.email },

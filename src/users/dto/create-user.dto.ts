@@ -11,6 +11,9 @@ export class CreateUserDto {
   @Length(1, 16)
   password: string;
 
+  @Length(1, 16)
+  confirmPassword: string;
+
   @IsEmail()
   @Length(1, 64)
   email: string;
