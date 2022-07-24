@@ -44,6 +44,7 @@ export class UsersService {
     const { page, pageSize } = searchUserDto;
     const where: FindOptionsWhere<User> = {
       createdBy,
+      softRemoved: false,
     };
     const findOpts: FindManyOptions<User> = {
       where,
@@ -62,7 +63,6 @@ export class UsersService {
   async findById(id: number, createdBy: number) {
     const user = await this.userRepository.findOneBy({
       id,
-      status: EUserStatus.enabled,
       createdBy,
     });
     if (!user) {
