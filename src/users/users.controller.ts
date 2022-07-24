@@ -15,6 +15,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { SearchUserDto } from './dto/search-user.dto';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { User } from 'src/common/decorators/user.decorator';
+import { User as UserEntity } from './entities/user.entity';
 // * 字段映射
 // * 参数校验
 // * 统一响应结构
@@ -33,6 +34,11 @@ export class UsersController {
   @Get()
   findAll(@Query() searchUserDto: SearchUserDto, @User('id') userId: number) {
     return this.usersService.findAll(searchUserDto, userId);
+  }
+
+  @Get('self')
+  findCurrentUser(@User() user: UserEntity) {
+    return user;
   }
 
   @Get(':id')
