@@ -38,7 +38,9 @@ export class ProjectsService {
   }
 
   async findAll(searchProjectDto: SearchProjectDto, userId: number) {
-    const where: FindOptionsWhere<Project> = {};
+    const where: FindOptionsWhere<Project> = {
+      softRemoved: false,
+    };
     if (searchProjectDto.name) {
       where.name = Like(`%${searchProjectDto.name}%`);
     }
@@ -64,7 +66,7 @@ export class ProjectsService {
     const project = await this.projectRepository
       .createQueryBuilder('project')
       .leftJoin('project.usersProjectsMap', 'project_user_map')
-      .where({ id })
+      .where({ id, softRemoved: false })
       .andWhere('project_user_map.userId = :userId', { userId })
       .andWhere('project_user_map.role = :role', {
         role: ERole.project_manage,
@@ -88,8 +90,9 @@ export class ProjectsService {
 
   async remove(id: number, userId: number) {
     const project = await this.findOne(id, userId);
-    const res = await this.projectRepository.delete({ id: project.id });
-    return !!res.raw;
+    project.softRemoved = true;
+    await this.projectRepository.save(project);
+    return true;
   }
 
   async nameAlreadyExist(name: string) {
@@ -102,6 +105,7 @@ export class ProjectsService {
     const projects = await qb
       .leftJoinAndSelect('project.usersProjectsMap', 'project_user_map')
       .where('project_user_map.userId = :userId', { userId })
+      .andWhere('project.softRemoved = :softRemoved', { softRemoved: false })
       .orderBy('project.status', 'ASC')
       .getMany();
     return projects.map(({ usersProjectsMap, ...others }) => {

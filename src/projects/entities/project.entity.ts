@@ -39,6 +39,12 @@ export class Project {
   })
   updateTime: string;
 
+  @Column({
+    type: 'boolean',
+    default: false,
+  })
+  softRemoved: boolean;
+
   @OneToMany(() => UserProject, (userProject) => userProject.project)
   @JoinColumn()
   usersProjectsMap: UserProject[];
@@ -46,5 +52,12 @@ export class Project {
   @BeforeUpdate()
   onBeforeUpdate() {
     this.updateTime = new Date().toISOString();
+  }
+
+  @BeforeUpdate()
+  beforeSoftRemoved() {
+    if (this.softRemoved) {
+      this.status = EProjectStatus.disabled;
+    }
   }
 }
