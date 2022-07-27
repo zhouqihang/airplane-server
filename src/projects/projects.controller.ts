@@ -16,6 +16,7 @@ import { SearchProjectDto } from './dto/search-project.dto';
 import { User } from 'src/common/decorators/user.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { User as UserEntity } from 'src/users/entities/user.entity';
+import { UpdateUserProjectDto } from 'src/common/dtos/update-user-project.dto';
 
 @Controller('projects')
 @UseGuards(AuthGuard)
@@ -60,5 +61,16 @@ export class ProjectsController {
   @Delete(':id')
   async remove(@Param('id') id: number, @User('id') userId: number) {
     return await this.projectsService.remove(id, userId);
+  }
+
+  @Get(':id/users')
+  async projectUsers(@Param('id') id: number, @User('id') userId: number) {
+    return await this.projectsService.projectUsers(id, [userId]);
+  }
+
+  @Post(':id/users')
+  async updateProjectUsers(@Body() userProjectDto: UpdateUserProjectDto[]) {
+    // return await this.projectsService.
+    return userProjectDto;
   }
 }

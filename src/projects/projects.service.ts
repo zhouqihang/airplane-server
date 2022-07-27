@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientException } from 'src/common/exceptions/client.exception';
 import { Pagination } from 'src/common/types/pagination';
@@ -10,6 +10,7 @@ import { Project } from './entities/project.entity';
 import { UserProject } from 'src/common/entities/user-project.entity';
 import { ERole } from 'src/common/consts/role-enum';
 import { User as UserEntity } from 'src/users/entities/user.entity';
+import { UserProjectService } from 'src/common/modules/user-project/user-project.service';
 
 @Injectable()
 export class ProjectsService {
@@ -17,6 +18,7 @@ export class ProjectsService {
     @InjectRepository(Project) private projectRepository: Repository<Project>,
     @InjectRepository(UserProject)
     private mapRepository: Repository<UserProject>,
+    private userProject: UserProjectService,
   ) {}
   async create(createProjectDto: CreateProjectDto, user: UserEntity) {
     if (await this.nameAlreadyExist(createProjectDto.name)) {
@@ -114,5 +116,14 @@ export class ProjectsService {
         role: usersProjectsMap[0].role,
       };
     });
+  }
+
+  async projectUsers(id: number, excludeUsers: number[]) {
+    const res = await this.userProject.findByProject(id);
+
+    if (!res) {
+      return [];
+    }
+    return res.filter((item) => !excludeUsers.includes(item.userId));
   }
 }

@@ -14,7 +14,7 @@ export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 64, unique: true })
+  @Column({ length: 64, unique: true, nullable: false })
   name: string;
 
   @Column({ length: 256 })
