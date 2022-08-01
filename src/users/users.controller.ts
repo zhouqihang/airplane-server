@@ -38,7 +38,7 @@ export class UsersController {
 
   @Get('self')
   findCurrentUser(@User() user: UserEntity) {
-    return user;
+    return this.usersService.findAllWithoutPagination(user.id);
   }
 
   @Get(':id')

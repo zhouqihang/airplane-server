@@ -60,6 +60,22 @@ export class UsersService {
     return new Pagination(users, count, searchUserDto);
   }
 
+  async findAllWithoutPagination(createdBy: number) {
+    const where: FindOptionsWhere<User> = {
+      createdBy,
+      softRemoved: false,
+    };
+    const findOpts: FindManyOptions<User> = {
+      where,
+      order: {
+        username: 'DESC',
+        status: 'ASC',
+      },
+    };
+    const users = await this.userRepository.find(findOpts);
+    return users;
+  }
+
   async findById(id: number, createdBy: number) {
     const user = await this.userRepository.findOneBy({
       id,
