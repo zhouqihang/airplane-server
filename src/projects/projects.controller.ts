@@ -69,8 +69,18 @@ export class ProjectsController {
   }
 
   @Post(':id/users')
-  async updateProjectUsers(@Body() userProjectDto: UpdateUserProjectDto[]) {
-    // return await this.projectsService.
-    return userProjectDto;
+  async updateProjectUsers(
+    @Param('id') id: number,
+    @Body() userProjectDto: UpdateUserProjectDto,
+  ) {
+    return await this.projectsService.updateProjectUsers(id, userProjectDto);
+  }
+
+  @Delete(':id/users/:mapId')
+  async removeProjectUsers(
+    @Param('id') id: number,
+    @Param('mapId') mapId: number,
+  ) {
+    return await this.projectsService.removeProjectUsers(id, mapId);
   }
 }

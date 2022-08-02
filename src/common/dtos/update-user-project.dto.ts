@@ -4,7 +4,7 @@ import { ERole } from '../consts/role-enum';
 export class UpdateUserProjectDto {
   @IsOptional()
   @IsNumber()
-  id: number;
+  id?: number;
 
   @IsNotEmpty()
   userId: number;

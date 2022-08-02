@@ -11,6 +11,7 @@ import { UserProject } from 'src/common/entities/user-project.entity';
 import { ERole } from 'src/common/consts/role-enum';
 import { User as UserEntity } from 'src/users/entities/user.entity';
 import { UserProjectService } from 'src/common/modules/user-project/user-project.service';
+import { UpdateUserProjectDto } from 'src/common/dtos/update-user-project.dto';
 
 @Injectable()
 export class ProjectsService {
@@ -125,5 +126,46 @@ export class ProjectsService {
       return [];
     }
     return res.filter((item) => !excludeUsers.includes(item.userId));
+  }
+
+  async updateProjectUsers(pid: number, userProjectDto: UpdateUserProjectDto) {
+    if (userProjectDto.id) {
+      // update
+      const map = await this.mapRepository.findOneBy({ id: userProjectDto.id });
+      map.role = userProjectDto.role;
+      this.mapRepository.save(map);
+      return true;
+    } else {
+      // create
+      const has = await this.mapRepository.findOneBy({
+        user: { id: userProjectDto.userId },
+        project: { id: pid },
+      });
+      if (has) {
+        throw new ClientException(ClientException.responseCode.record_exist);
+      }
+      const qb = this.mapRepository.createQueryBuilder();
+      await qb
+        .insert()
+        .into(UserProject)
+        .values({
+          role: userProjectDto.role,
+          user: { id: userProjectDto.userId },
+          project: { id: pid },
+        })
+        .execute();
+      return true;
+    }
+  }
+
+  async removeProjectUsers(id: number, mapId: number) {
+    const record = await this.mapRepository.findOneBy({ id: mapId });
+    if (!record) {
+      throw new ClientException(ClientException.responseCode.record_not_exist);
+    }
+    await this.mapRepository.delete({
+      id: mapId,
+    });
+    return true;
   }
 }
