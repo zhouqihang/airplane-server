@@ -1,9 +1,11 @@
-import { Body, Controller, Post, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Body, Controller, Get, Post, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { Cookies } from 'src/common/decorators/cookie. decorator';
+import { User } from 'src/common/decorators/user.decorator';
 import CONFIG from 'src/config';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { User as UserEntity } from '../users/entities/user.entity';
 
 @Controller()
 export class AuthController {
@@ -34,5 +36,10 @@ export class AuthController {
     await this.authService.logout(sessionId);
     response.cookie('session_id', '', { expires: new Date() });
     return true;
+  }
+
+  @Get('account')
+  async getAccountInfo(@User() user: UserEntity) {
+    return user;
   }
 }
