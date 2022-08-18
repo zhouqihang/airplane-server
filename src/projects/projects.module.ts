@@ -15,5 +15,6 @@ import { UserProjectService } from 'src/common/modules/user-project/user-project
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService, UserProjectService],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

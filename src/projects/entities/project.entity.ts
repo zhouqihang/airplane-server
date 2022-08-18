@@ -1,4 +1,5 @@
 import { UserProject } from 'src/common/entities/user-project.entity';
+import { Menu } from 'src/menus/entities/menu.entity';
 import {
   BeforeUpdate,
   Column,
@@ -48,6 +49,9 @@ export class Project {
   @OneToMany(() => UserProject, (userProject) => userProject.project)
   @JoinColumn()
   usersProjectsMap: UserProject[];
+
+  @OneToMany(() => Menu, (menu) => menu.project)
+  menus: Menu[];
 
   @BeforeUpdate()
   onBeforeUpdate() {

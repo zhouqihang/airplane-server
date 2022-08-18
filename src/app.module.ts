@@ -10,6 +10,9 @@ import { ProjectsModule } from './projects/projects.module';
 import config from './config';
 import { Project } from './projects/entities/project.entity';
 import { UserProject } from './common/entities/user-project.entity';
+import { Menu } from './menus/entities/menu.entity';
+import { PagesModule } from './pages/pages.module';
+import { MenusModule } from './menus/menus.module';
 
 const ORMModule = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -18,7 +21,7 @@ const ORMModule = TypeOrmModule.forRoot({
   username: config.db_username,
   password: config.db_pwd,
   database: config.db_database,
-  entities: [User, Project, UserProject],
+  entities: [User, Project, UserProject, Menu],
   synchronize: true,
 });
 
@@ -36,6 +39,8 @@ const UsedRedisModule = RedisModule.forRoot({
     UsedRedisModule,
     AuthModule,
     ProjectsModule,
+    PagesModule,
+    MenusModule,
   ],
   controllers: [AppController],
   providers: [AppService],
