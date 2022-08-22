@@ -5,6 +5,7 @@
 export enum EResponseCode {
   ok = 200,
   bad_request = 400,
+  forbidden = 403,
   not_login = 4030,
   record_not_exist = 40001,
   record_exist = 40002,
@@ -19,6 +20,7 @@ export enum EResponseCode {
 export const responseMsgs: Record<EResponseCode, string> = {
   [EResponseCode.ok]: 'successed',
   [EResponseCode.bad_request]: '',
+  [EResponseCode.forbidden]: 'forbidden',
   [EResponseCode.not_login]: 'user not login',
   [EResponseCode.user_already_exist]: 'user already exist',
   [EResponseCode.user_not_exist]: 'user not exist',
