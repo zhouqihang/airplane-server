@@ -4,9 +4,13 @@ import { ERole } from 'src/common/consts/role-enum';
 import { ClientException } from 'src/common/exceptions/client.exception';
 import { mapDto2Where } from 'src/common/helpers/map-dto-where';
 import { UserProjectService } from 'src/common/modules/user-project/user-project.service';
+import { EStatus } from 'src/common/types/enum';
+import { Pagination } from 'src/common/types/pagination';
 import { ProjectsService } from 'src/projects/projects.service';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { AllMenuDto } from './dto/all-menu.dto';
 import { CreateMenuDto } from './dto/create-menu.dto';
+import { SearchMenuDto } from './dto/search-menu.dto';
 import { UpdateMenuDto } from './dto/update-menu.dto';
 import { Menu } from './entities/menu.entity';
 
@@ -25,13 +29,7 @@ export class MenusService {
    */
   async create(createMenuDto: CreateMenuDto, userId: number) {
     // 获取当前用户是否有某个项目的权限
-    const role = await this.userProject.getUserRoleInProject(
-      userId,
-      createMenuDto.projectId,
-    );
-    if (role === ERole.project_op) {
-      throw new ClientException(ClientException.responseCode.permission_denied);
-    }
+    await this.checkIsDeveloper(createMenuDto.projectId, userId);
 
     const menu = new Menu();
     menu.title = createMenuDto.title;
@@ -45,19 +43,100 @@ export class MenusService {
     return await this.menuRepository.save(menu);
   }
 
-  findAll() {
-    return `This action returns all menus`;
+  async findByPage(searchMenuDto: SearchMenuDto, userId: number) {
+    await this.checkIsDeveloper(searchMenuDto.projectId, userId);
+    const { page, pageSize } = searchMenuDto;
+    const where: FindOptionsWhere<Menu> = {
+      project: { id: searchMenuDto.projectId },
+      parentMenu: -1,
+    };
+    if (searchMenuDto.title) {
+      where.title = Like(`%${searchMenuDto.title}%`);
+    }
+    if (searchMenuDto.status) {
+      where.status = searchMenuDto.status as EStatus;
+    }
+    const [menus, count] = await this.menuRepository.findAndCount({
+      where,
+      skip: pageSize * (page - 1),
+      take: pageSize,
+      order: {
+        updateTime: 'DESC',
+        status: 'ASC',
+      },
+    });
+    return new Pagination(menus, count, searchMenuDto);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} menu`;
+  async findAll(dto: AllMenuDto, userId: number) {
+    await this.checkIsDeveloper(dto.projectId, userId);
+    const where: FindOptionsWhere<Menu> = {
+      project: { id: dto.projectId },
+      parentMenu: -1,
+    };
+    if (dto.status) {
+      where.status = dto.status;
+    }
+    return await this.menuRepository.findBy(where);
   }
 
-  update(id: number, updateMenuDto: UpdateMenuDto) {
-    return `This action updates a #${id} menu`;
+  async findOne(id: number, userId: number) {
+    const menu = await this.menuRepository.findOne({
+      where: { id },
+      relations: ['project'],
+    });
+    if (!menu) {
+      throw new ClientException(ClientException.responseCode.record_not_exist);
+    }
+    await this.checkIsDeveloper(menu.project.id, userId);
+    return menu;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} menu`;
+  async update(id: number, updateMenuDto: UpdateMenuDto, userId: number) {
+    let menu = await this.menuRepository.findOne({
+      where: { id },
+      relations: ['project'],
+    });
+    if (!menu) {
+      throw new ClientException(ClientException.responseCode.record_not_exist);
+    }
+    await this.checkIsDeveloper(menu.project.id, userId);
+    mapDto2Where(updateMenuDto, menu, [
+      'title',
+      'status',
+      'routerName',
+      'query',
+    ]);
+    // 检查是否拥有要修改 menu 的权限
+    if (updateMenuDto.parentMenu && updateMenuDto.parentMenu !== -1) {
+      const parentMenu = await this.menuRepository.findOne({
+        where: { id: updateMenuDto.parentMenu },
+        relations: ['project'],
+      });
+      if (!parentMenu || parentMenu.project.id !== menu.project.id) {
+        throw new ClientException(ClientException.responseCode.forbidden);
+      }
+    }
+    menu.parentMenu = updateMenuDto.parentMenu;
+    menu = await this.menuRepository.save(menu);
+    return menu;
+  }
+
+  async remove(id: number, userId: number) {
+    const menu = await this.menuRepository.findOne({
+      where: { id },
+      relations: ['project'],
+    });
+    await this.checkIsDeveloper(menu.project.id, userId);
+    await this.menuRepository.delete({ id: menu.id });
+    return true;
+  }
+
+  async checkIsDeveloper(projectId: number, userId: number) {
+    // 获取当前用户是否有某个项目的权限
+    const role = await this.userProject.getUserRoleInProject(userId, projectId);
+    if (role === ERole.project_op) {
+      throw new ClientException(ClientException.responseCode.permission_denied);
+    }
   }
 }
