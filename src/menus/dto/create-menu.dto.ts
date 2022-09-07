@@ -19,7 +19,4 @@ export class CreateMenuDto {
   @IsNumber()
   @IsOptional()
   parentMenu = -1;
-
-  @IsNumber()
-  projectId: number;
 }

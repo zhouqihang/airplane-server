@@ -27,9 +27,13 @@ export class MenusService {
    * @param userId userId
    * @returns Promise
    */
-  async create(createMenuDto: CreateMenuDto, userId: number) {
+  async create(
+    createMenuDto: CreateMenuDto,
+    userId: number,
+    projectId: number,
+  ) {
     // 获取当前用户是否有某个项目的权限
-    await this.checkIsDeveloper(createMenuDto.projectId, userId);
+    await this.checkIsDeveloper(projectId, userId);
 
     const menu = new Menu();
     menu.title = createMenuDto.title;
@@ -39,39 +43,43 @@ export class MenusService {
     }
     menu.status = createMenuDto.status;
     menu.parentMenu = createMenuDto.parentMenu;
-    menu.project = await this.project.findOne(createMenuDto.projectId, userId);
+    menu.project = await this.project.findOne(projectId, userId);
     return await this.menuRepository.save(menu);
   }
 
-  async findByPage(searchMenuDto: SearchMenuDto, userId: number) {
-    await this.checkIsDeveloper(searchMenuDto.projectId, userId);
+  async findByPage(
+    searchMenuDto: SearchMenuDto,
+    userId: number,
+    projectId: number,
+  ) {
+    await this.checkIsDeveloper(projectId, userId);
     const { page, pageSize } = searchMenuDto;
-    const where: FindOptionsWhere<Menu> = {
-      project: { id: searchMenuDto.projectId },
-      parentMenu: -1,
-    };
+    let query = `select main.*, sub.title as parentMenu from menus main left join menus sub on main.parentMenu = sub.id where 1 `;
+    let countQuery = `select count(title) as count from menus`;
+    query += `and main.projectId = ${projectId} `;
     if (searchMenuDto.title) {
-      where.title = Like(`%${searchMenuDto.title}%`);
+      query += `and main.title like %${searchMenuDto.title}% `;
+      countQuery += `and title like %${searchMenuDto.title}% `;
     }
     if (searchMenuDto.status) {
-      where.status = searchMenuDto.status as EStatus;
+      query += `and main.status = ${searchMenuDto.status} `;
+      countQuery += `and status = ${searchMenuDto.status} `;
     }
-    const [menus, count] = await this.menuRepository.findAndCount({
-      where,
-      skip: pageSize * (page - 1),
-      take: pageSize,
-      order: {
-        updateTime: 'DESC',
-        status: 'ASC',
-      },
-    });
-    return new Pagination(menus, count, searchMenuDto);
+    query += `order by main.updateTime DESC, main.status ASC `;
+    query += `limit ${(page - 1) * pageSize}, ${pageSize}`;
+    const res = await this.menuRepository.manager.query(query);
+    const countRes = await this.menuRepository.manager.query(countQuery);
+    return new Pagination(
+      res.map((item) => Object.assign(item, { status: Number(item.status) })),
+      Number(countRes[0].count),
+      searchMenuDto,
+    );
   }
 
-  async findAll(dto: AllMenuDto, userId: number) {
-    await this.checkIsDeveloper(dto.projectId, userId);
+  async findAll(dto: AllMenuDto, userId: number, projectId: number) {
+    await this.checkIsDeveloper(projectId, userId);
     const where: FindOptionsWhere<Menu> = {
-      project: { id: dto.projectId },
+      project: { id: projectId },
       parentMenu: -1,
     };
     if (dto.status) {

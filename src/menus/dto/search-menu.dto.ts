@@ -8,7 +8,4 @@ export class SearchMenuDto extends PaginationDto {
 
   @IsString()
   status: unknown = '';
-
-  @IsNumberString()
-  projectId: number;
 }

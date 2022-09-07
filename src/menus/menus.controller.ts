@@ -18,14 +18,18 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { SearchMenuDto } from './dto/search-menu.dto';
 import { AllMenuDto } from './dto/all-menu.dto';
 
-@Controller('menus')
+@Controller('projects/:projectId/menus')
 @UseGuards(AuthGuard)
 export class MenusController {
   constructor(private readonly menusService: MenusService) {}
 
   @Post()
-  async create(@Body() createMenuDto: CreateMenuDto, @User() user: UserEntity) {
-    return await this.menusService.create(createMenuDto, user.id);
+  async create(
+    @Body() createMenuDto: CreateMenuDto,
+    @User() user: UserEntity,
+    @Param('projectId') projectId: number,
+  ) {
+    return await this.menusService.create(createMenuDto, user.id, projectId);
   }
 
   /**
@@ -38,13 +42,22 @@ export class MenusController {
   async findByPage(
     @Query() searchMenuDto: SearchMenuDto,
     @User() user: UserEntity,
+    @Param('projectId') projectId: number,
   ) {
-    return await this.menusService.findByPage(searchMenuDto, user.id);
+    return await this.menusService.findByPage(
+      searchMenuDto,
+      user.id,
+      projectId,
+    );
   }
 
   @Get('all')
-  async findAll(@Query() searchDto: AllMenuDto, @User('id') userId: number) {
-    return await this.menusService.findAll(searchDto, userId);
+  async findAll(
+    @Query() searchDto: AllMenuDto,
+    @User('id') userId: number,
+    @Param('projectId') projectId: number,
+  ) {
+    return await this.menusService.findAll(searchDto, userId, projectId);
   }
 
   /**

@@ -5,7 +5,4 @@ export class AllMenuDto {
   @IsNumberString()
   @IsOptional()
   status: EStatus;
-
-  @IsNumberString()
-  projectId: number;
 }
