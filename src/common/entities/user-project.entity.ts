@@ -1,6 +1,7 @@
 import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
+  BaseEntity,
   Column,
   Entity,
   ManyToOne,
@@ -10,7 +11,7 @@ import {
 import { ERole } from '../consts/role-enum';
 
 @Entity('user_projects_project_users')
-export class UserProject {
+export class UserProject extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
