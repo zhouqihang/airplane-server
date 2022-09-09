@@ -43,11 +43,11 @@ export class MenusService {
   async findByPage(searchMenuDto: SearchMenuDto, projectId: number) {
     const { page, pageSize } = searchMenuDto;
     let query = `select main.*, sub.title as parentMenu from menus main left join menus sub on main.parentMenu = sub.id where 1 `;
-    let countQuery = `select count(title) as count from menus`;
+    let countQuery = `select count(title) as count from menus where 1 `;
     query += `and main.projectId = ${projectId} `;
     if (searchMenuDto.title) {
-      query += `and main.title like %${searchMenuDto.title}% `;
-      countQuery += `and title like %${searchMenuDto.title}% `;
+      query += `and main.title like '%${searchMenuDto.title}%' `;
+      countQuery += `and title like '%${searchMenuDto.title}%' `;
     }
     if (searchMenuDto.status) {
       query += `and main.status = ${searchMenuDto.status} `;
