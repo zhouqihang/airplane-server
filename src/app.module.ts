@@ -13,6 +13,7 @@ import { UserProject } from './common/entities/user-project.entity';
 import { Menu } from './menus/entities/menu.entity';
 import { PagesModule } from './pages/pages.module';
 import { MenusModule } from './menus/menus.module';
+import { Page } from './pages/entities/page.entity';
 
 const ORMModule = TypeOrmModule.forRoot({
   type: 'mysql',
@@ -21,7 +22,7 @@ const ORMModule = TypeOrmModule.forRoot({
   username: config.db_username,
   password: config.db_pwd,
   database: config.db_database,
-  entities: [User, Project, UserProject, Menu],
+  entities: [User, Project, UserProject, Menu, Page],
   synchronize: true,
 });
 

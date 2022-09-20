@@ -67,10 +67,12 @@ export class MenusService {
   async findAll(dto: AllMenuDto, projectId: number) {
     const where: FindOptionsWhere<Menu> = {
       project: { id: projectId },
-      parentMenu: -1,
     };
     if (dto.status) {
       where.status = dto.status;
+    }
+    if (dto.belongsTo) {
+      where.parentMenu = dto.belongsTo;
     }
     return await this.menuRepository.findBy(where);
   }

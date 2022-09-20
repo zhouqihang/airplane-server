@@ -1,4 +1,5 @@
 import { EStatus } from 'src/common/types/enum';
+import { Page } from 'src/pages/entities/page.entity';
 import { Project } from 'src/projects/entities/project.entity';
 import {
   BeforeUpdate,
@@ -32,6 +33,9 @@ export class Menu {
   @ManyToOne(() => Project, (project) => project.menus)
   project: Project;
   // TODO 创建人和user一对多
+
+  @ManyToOne(() => Page, (page) => page.menus)
+  page: Page;
 
   @Column({
     type: 'datetime',

@@ -1,4 +1,5 @@
 import { UserProject } from 'src/common/entities/user-project.entity';
+import { Page } from 'src/pages/entities/page.entity';
 import {
   Entity,
   Column,
@@ -50,6 +51,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => UserProject, (userProject) => userProject.user)
   projects: UserProject[];
+
+  @OneToMany(() => Page, (page) => page.updator)
+  pages: Page[];
 
   @BeforeUpdate()
   setUpdateTime() {

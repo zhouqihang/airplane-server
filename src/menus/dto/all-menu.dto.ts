@@ -5,4 +5,8 @@ export class AllMenuDto {
   @IsNumberString()
   @IsOptional()
   status: EStatus;
+
+  @IsOptional()
+  @IsNumberString()
+  belongsTo: number;
 }

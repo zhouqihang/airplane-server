@@ -9,7 +9,7 @@ import { RedisClientService } from '../modules/redis/redis-client.service';
  * @param role ERole[]
  * @returns ProjectGuard
  */
-export function ProjectGuardCreator(...role: ERole[]) {
+export function projectGuardCreator(...role: ERole[]) {
   return class ProjectGuard implements CanActivate {
     async canActivate(context: ExecutionContext): Promise<boolean> {
       // 获取userId projectId

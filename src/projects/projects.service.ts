@@ -82,6 +82,21 @@ export class ProjectsService {
     return project;
   }
 
+  /**
+   * 通过 projectid 查找一个project，不校验 role 和 userId
+   * @param id projectId
+   * @returns project
+   */
+  async findOneWithoutRole(id: number) {
+    const project = await this.projectRepository.findOneBy({
+      id,
+    });
+    if (!project) {
+      throw new ClientException(ClientException.responseCode.record_not_exist);
+    }
+    return project;
+  }
+
   async update(id: number, updateProjectDto: UpdateProjectDto, userId: number) {
     const project = await this.findOne(id, userId);
     Object.keys(updateProjectDto).forEach((key) => {
