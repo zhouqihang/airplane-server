@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsEnum, IsJSON, IsNumber, IsOptional, Length } from 'class-validator';
 import { EStatus } from 'src/common/types/enum';
 
@@ -8,8 +9,8 @@ export class CreateMenuDto {
   @Length(1, 128)
   routerName: string;
 
-  @IsJSON()
   @IsOptional()
+  @IsJSON()
   query: string;
 
   @IsEnum(EStatus)
@@ -19,4 +20,8 @@ export class CreateMenuDto {
   @IsNumber()
   @IsOptional()
   parentMenu = -1;
+
+  @IsOptional()
+  @IsNumber()
+  pageId: number;
 }

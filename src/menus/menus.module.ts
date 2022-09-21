@@ -9,14 +9,18 @@ import { UserProject } from 'src/common/entities/user-project.entity';
 import { ProjectsModule } from 'src/projects/projects.module';
 import { ProjectsService } from 'src/projects/projects.service';
 import { Project } from 'src/projects/entities/project.entity';
+import { PagesModule } from 'src/pages/pages.module';
+import { PagesService } from 'src/pages/pages.service';
+import { Page } from 'src/pages/entities/page.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Menu, UserProject, Project]),
+    TypeOrmModule.forFeature([Menu, UserProject, Project, Page]),
     UserProjectModule,
     ProjectsModule,
+    PagesModule,
   ],
   controllers: [MenusController],
-  providers: [MenusService, UserProjectService, ProjectsService],
+  providers: [MenusService, UserProjectService, ProjectsService, PagesService],
 })
 export class MenusModule {}

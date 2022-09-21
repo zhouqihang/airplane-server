@@ -8,5 +8,6 @@ export class UpdateMenuDto extends PartialType(
     'query',
     'routerName',
     'status',
+    'pageId',
   ]),
 ) {}

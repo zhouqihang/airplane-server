@@ -6,6 +6,7 @@ import { mapDto2Where } from 'src/common/helpers/map-dto-where';
 import { UserProjectService } from 'src/common/modules/user-project/user-project.service';
 import { EStatus } from 'src/common/types/enum';
 import { Pagination } from 'src/common/types/pagination';
+import { PagesService } from 'src/pages/pages.service';
 import { ProjectsService } from 'src/projects/projects.service';
 import { FindOptionsWhere, Like, Repository } from 'typeorm';
 import { AllMenuDto } from './dto/all-menu.dto';
@@ -20,6 +21,7 @@ export class MenusService {
     private userProject: UserProjectService,
     @InjectRepository(Menu) private menuRepository: Repository<Menu>,
     private project: ProjectsService,
+    private page: PagesService,
   ) {}
   /**
    * 创建一个新的 menu
@@ -36,6 +38,9 @@ export class MenusService {
     }
     menu.status = createMenuDto.status;
     menu.parentMenu = createMenuDto.parentMenu;
+    if (createMenuDto.pageId) {
+      menu.page = await this.page.findOne(createMenuDto.pageId);
+    }
     menu.project = await this.project.findOneWithoutRole(projectId);
     return await this.menuRepository.save(menu);
   }
@@ -80,7 +85,7 @@ export class MenusService {
   async findOne(id: number) {
     const menu = await this.menuRepository.findOne({
       where: { id },
-      relations: ['project'],
+      relations: ['project', 'page'],
     });
     if (!menu) {
       throw new ClientException(ClientException.responseCode.record_not_exist);
@@ -91,7 +96,7 @@ export class MenusService {
   async update(id: number, updateMenuDto: UpdateMenuDto) {
     let menu = await this.menuRepository.findOne({
       where: { id },
-      relations: ['project'],
+      relations: ['project', 'page'],
     });
     if (!menu) {
       throw new ClientException(ClientException.responseCode.record_not_exist);
@@ -113,6 +118,11 @@ export class MenusService {
       }
     }
     menu.parentMenu = updateMenuDto.parentMenu;
+    if (updateMenuDto.pageId) {
+      if (updateMenuDto.pageId != menu.page?.id) {
+        menu.page = await this.page.findOne(updateMenuDto.pageId);
+      }
+    }
     menu = await this.menuRepository.save(menu);
     return menu;
   }
