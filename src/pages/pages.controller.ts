@@ -50,6 +50,11 @@ export class PagesController {
     return await this.pageService.updateById(updateDto, id, user);
   }
 
+  @Get('all')
+  async findAll(@Param('projectId') projectId: number) {
+    return await this.pageService.findAll(projectId);
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: number) {
     return await this.pageService.findOne(id);

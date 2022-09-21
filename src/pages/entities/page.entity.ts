@@ -1,5 +1,6 @@
 import { EStatus } from 'src/common/types/enum';
 import { Menu } from 'src/menus/entities/menu.entity';
+import { Project } from 'src/projects/entities/project.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   BeforeInsert,
@@ -40,6 +41,9 @@ export class Page {
   @OneToMany(() => Menu, (menu) => menu.page, { cascade: true })
   menus: Menu[];
 
+  @ManyToOne(() => Project, (project) => project.pages)
+  project: Project;
+
   @Column({
     type: 'datetime',
     default: () => 'NOW()',
@@ -60,4 +64,5 @@ export class Page {
   // TODO 关联页面配置
   // TODO 关联变更记录
   // TODO 更新前改动变更记录
+  // TODO 关联项目
 }

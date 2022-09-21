@@ -87,4 +87,13 @@ export class PagesService {
     }
     return page;
   }
+  async findAll(projectId: number) {
+    const pages = await this.pagesRepository.find({
+      where: {
+        project: { id: projectId },
+      },
+    });
+
+    return pages;
+  }
 }
