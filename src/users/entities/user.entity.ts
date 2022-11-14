@@ -1,4 +1,5 @@
 import { UserProject } from 'src/common/entities/user-project.entity';
+import { PageConfig } from 'src/page-configs/entities/page-config.entity';
 import { Page } from 'src/pages/entities/page.entity';
 import {
   Entity,
@@ -54,6 +55,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Page, (page) => page.updator)
   pages: Page[];
+
+  @OneToMany(() => PageConfig, (pageConfig) => pageConfig.updator)
+  pageConfigs: PageConfig[];
 
   @BeforeUpdate()
   setUpdateTime() {

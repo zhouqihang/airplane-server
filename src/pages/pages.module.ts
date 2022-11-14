@@ -8,5 +8,6 @@ import { PagesService } from './pages.service';
   imports: [TypeOrmModule.forFeature([Page])],
   controllers: [PagesController],
   providers: [PagesService],
+  exports: [PagesService],
 })
 export class PagesModule {}

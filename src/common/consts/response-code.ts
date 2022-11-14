@@ -15,6 +15,7 @@ export enum EResponseCode {
   user_disabled = 41003,
   pwd_not_equal_confirm_pwd = 41004,
   permission_denied = 41005,
+  params_err = 41006,
 }
 
 export const responseMsgs: Record<EResponseCode, string> = {
@@ -31,4 +32,5 @@ export const responseMsgs: Record<EResponseCode, string> = {
   [EResponseCode.record_not_exist]: 'record not exist',
   [EResponseCode.record_exist]: 'record exist',
   [EResponseCode.permission_denied]: 'permission_denied',
+  [EResponseCode.params_err]: null,
 };
