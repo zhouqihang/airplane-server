@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PageConfigsService } from './page-configs.service';
 import { CreatePageConfigDto } from './dto/create-page-config.dto';
@@ -43,13 +44,13 @@ export class PageConfigsController {
   }
 
   /**
-   * 查找某个page的一个具体版本配置
+   * 查找某个page的一个具体版本配置，如果没有传id，那么返回最新的一个版本配置
    * @param id {number}
    * @returns
    */
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.pageConfigsService.findOne(+id);
+  @Get('getById')
+  findOne(@Param('pageId') pageId: number, @Query('id') id?: number) {
+    return this.pageConfigsService.findOne(pageId, id);
   }
 
   @Patch(':id')

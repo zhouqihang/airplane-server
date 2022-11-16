@@ -37,8 +37,23 @@ export class PageConfigsService {
     return `This action returns all pageConfigs`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pageConfig`;
+  async findOne(pageId: number, id?: number) {
+    if (!id) {
+      const res = await this.repo.find({
+        where: {
+          belongsToPage: { id: pageId },
+        },
+        order: {
+          updateTime: 'DESC',
+        },
+        take: 1,
+      });
+      if (res && res.length) {
+        return res.pop();
+      }
+      return null;
+    }
+    return await this.repo.findOneBy({ id });
   }
 
   update(id: number, updatePageConfigDto: UpdatePageConfigDto) {
