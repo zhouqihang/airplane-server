@@ -23,6 +23,12 @@ export class Page {
   @Column({ length: 128, nullable: false })
   pageName: string;
 
+  @Column({ length: 128, nullable: false, unique: true })
+  pageRouter: string;
+
+  @Column({ length: 128, nullable: false, unique: true })
+  pagePath: string;
+
   // @Column()
   // version: string;
 

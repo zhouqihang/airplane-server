@@ -6,6 +6,12 @@ export class UpdatePageDto {
   @IsOptional()
   pageName: string;
 
+  @Length(1, 128)
+  pageRouter: string;
+
+  @Length(1, 128)
+  pagePath: string;
+
   @IsEnum(EStatus)
   @IsOptional()
   status: EStatus;

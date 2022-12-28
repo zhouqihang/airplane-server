@@ -19,6 +19,8 @@ export class PagesService {
   async create(dto: CreatePageDto, user: User) {
     const page = new Page();
     page.pageName = dto.pageName;
+    page.pageRouter = dto.pageRouter;
+    page.pagePath = dto.pagePath;
     page.status = dto.status;
     page.updator = user;
     return await this.pagesRepository.save(page);
@@ -49,6 +51,12 @@ export class PagesService {
     }
     if (updateDto.pageName) {
       page.pageName = updateDto.pageName;
+    }
+    if (updateDto.pageRouter) {
+      page.pageRouter = updateDto.pageRouter;
+    }
+    if (updateDto.pagePath) {
+      page.pagePath = updateDto.pagePath;
     }
     if (updateDto.status) {
       page.status = updateDto.status;
