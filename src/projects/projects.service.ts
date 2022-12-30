@@ -12,11 +12,16 @@ import { ERole } from 'src/common/consts/role-enum';
 import { User as UserEntity } from 'src/users/entities/user.entity';
 import { UserProjectService } from 'src/common/modules/user-project/user-project.service';
 import { UpdateUserProjectDto } from 'src/common/dtos/update-user-project.dto';
+import { EStatus } from 'src/common/types/enum';
+import { Menu } from 'src/menus/entities/menu.entity';
+import { Page } from 'src/pages/entities/page.entity';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(Project) private projectRepository: Repository<Project>,
+    @InjectRepository(Menu) private menuRepository: Repository<Menu>,
+    @InjectRepository(Page) private pageRepository: Repository<Page>,
     @InjectRepository(UserProject)
     private mapRepository: Repository<UserProject>,
     private userProject: UserProjectService,
@@ -182,5 +187,50 @@ export class ProjectsService {
       id: mapId,
     });
     return true;
+  }
+
+  /**
+   * 获取指定project的完整配置
+   */
+  async getProjectConf(projectId: number) {
+    // const project = await this.projectRepository.findOne({
+    //   where: {
+    //     id: projectId,
+    //   },
+    //   relations: ['pages'],
+    // });
+    const menus = await this.menuRepository.find({
+      where: {
+        project: { id: projectId },
+        status: EStatus.enabled,
+      },
+      relations: ['page'],
+    });
+    const pages = await this.pageRepository.find({
+      where: {
+        project: { id: projectId },
+        status: EStatus.enabled,
+      },
+      relations: ['configs'],
+    });
+    return {
+      globalConfig: {},
+      apisConfig: {},
+      menusConfig: {
+        children: menus,
+      },
+      pagesConfig: {
+        children: pages.map((item) => {
+          const page = Object.assign({ jsonConfig: null }, item);
+          delete page.configs;
+          if (item.configs[0]) {
+            page.jsonConfig = item.configs[0].jsonConfig;
+          } else {
+            page.jsonConfig = { components: [] };
+          }
+          return page;
+        }),
+      },
+    };
   }
 }

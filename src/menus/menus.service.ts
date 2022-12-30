@@ -79,7 +79,10 @@ export class MenusService {
     if (dto.belongsTo) {
       where.parentMenu = dto.belongsTo;
     }
-    return await this.menuRepository.findBy(where);
+    return await this.menuRepository.find({
+      where,
+      relations: ['page'],
+    });
   }
 
   async findOne(id: number) {

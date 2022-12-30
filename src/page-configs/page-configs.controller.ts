@@ -26,6 +26,12 @@ import { ERole } from 'src/common/consts/role-enum';
 export class PageConfigsController {
   constructor(private readonly pageConfigsService: PageConfigsService) {}
 
+  /**
+   * 新建一条页面配置
+   * @param createPageConfigDto
+   * @param user
+   * @returns
+   */
   @Post()
   create(
     @Body() createPageConfigDto: CreatePageConfigDto,
@@ -35,7 +41,7 @@ export class PageConfigsController {
   }
 
   /**
-   * 查找某个page下所有的发布记录
+   * 查找某个page下所有的配置记录
    * @returns
    */
   @Get()

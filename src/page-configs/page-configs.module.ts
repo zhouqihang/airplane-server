@@ -12,5 +12,6 @@ import { PagesModule } from 'src/pages/pages.module';
   imports: [TypeOrmModule.forFeature([PageConfig, Page, User]), PagesModule],
   controllers: [PageConfigsController],
   providers: [PageConfigsService, PagesService],
+  exports: [PageConfigsService, PagesService],
 })
 export class PageConfigsModule {}
