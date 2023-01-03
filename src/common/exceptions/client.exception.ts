@@ -5,6 +5,9 @@ export class ClientException extends HttpException {
   static InitParamsErr(msg: string) {
     return new ClientException(EResponseCode.params_err, msg);
   }
+  static InitPostErr(msg: string) {
+    return new ClientException(EResponseCode.post_err, msg);
+  }
 
   static responseCode = EResponseCode;
 

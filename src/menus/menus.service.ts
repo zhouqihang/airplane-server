@@ -32,7 +32,6 @@ export class MenusService {
   async create(createMenuDto: CreateMenuDto, projectId: number) {
     const menu = new Menu();
     menu.title = createMenuDto.title;
-    menu.routerName = createMenuDto.routerName;
     if (createMenuDto.query) {
       menu.query = createMenuDto.query;
     }
@@ -104,12 +103,7 @@ export class MenusService {
     if (!menu) {
       throw new ClientException(ClientException.responseCode.record_not_exist);
     }
-    mapDto2Where(updateMenuDto, menu, [
-      'title',
-      'status',
-      'routerName',
-      'query',
-    ]);
+    mapDto2Where(updateMenuDto, menu, ['title', 'status', 'query']);
     // 检查是否拥有要修改 menu 的权限
     if (updateMenuDto.parentMenu && updateMenuDto.parentMenu !== -1) {
       const parentMenu = await this.menuRepository.findOne({
@@ -131,6 +125,16 @@ export class MenusService {
   }
 
   async remove(id: number) {
+    const children = await this.menuRepository.findOne({
+      where: {
+        parentMenu: id,
+      },
+    });
+    if (children) {
+      throw ClientException.InitPostErr(
+        `the menu can not be removed, please remove menus belongs to it first`,
+      );
+    }
     const menu = await this.menuRepository.findOne({
       where: { id },
       relations: ['project'],

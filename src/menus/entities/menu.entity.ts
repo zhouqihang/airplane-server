@@ -17,9 +17,6 @@ export class Menu {
   @Column({ length: 128, unique: true, nullable: false })
   title: string;
 
-  @Column({ length: 128, nullable: false })
-  routerName: string;
-
   @Column({ type: 'json', default: null })
   query: string;
 
