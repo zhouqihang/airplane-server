@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientException } from 'src/common/exceptions/client.exception';
 import { Pagination } from 'src/common/types/pagination';
@@ -15,6 +15,7 @@ import { UpdateUserProjectDto } from 'src/common/dtos/update-user-project.dto';
 import { EStatus } from 'src/common/types/enum';
 import { Menu } from 'src/menus/entities/menu.entity';
 import { Page } from 'src/pages/entities/page.entity';
+import { ProjectRequest } from 'src/project-request/entities/project-request.entity';
 
 @Injectable()
 export class ProjectsService {
@@ -35,6 +36,7 @@ export class ProjectsService {
     project.name = createProjectDto.name;
     project.desc = createProjectDto.desc;
     project.status = createProjectDto.status;
+    project.requestConfig = ProjectRequest.init();
     await this.projectRepository.save(project);
 
     const userProject = new UserProject();

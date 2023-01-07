@@ -1,12 +1,14 @@
 import { UserProject } from 'src/common/entities/user-project.entity';
 import { Menu } from 'src/menus/entities/menu.entity';
 import { Page } from 'src/pages/entities/page.entity';
+import { ProjectRequest } from 'src/project-request/entities/project-request.entity';
 import {
   BeforeUpdate,
   Column,
   Entity,
   JoinColumn,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { EProjectStatus } from '../types';
@@ -56,6 +58,10 @@ export class Project {
 
   @OneToMany(() => Page, (page) => page.project)
   pages: Page[];
+
+  @OneToOne(() => ProjectRequest, { cascade: true })
+  @JoinColumn()
+  requestConfig: ProjectRequest;
 
   @BeforeUpdate()
   onBeforeUpdate() {
